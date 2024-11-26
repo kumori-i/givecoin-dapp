@@ -107,7 +107,7 @@ class ManageCampaign extends Component {
               this.props.allCampaigns[cindex],
             );
 
-            if (this.props.campaignMilestones[cindex] !== 0) {
+            if (this.props.campaignMilestones[cindex] !== (0).toString()) {
               const prevAmount = await campaignContract.methods
                 .getMilestoneAmountAt(this.props.campaignMilestones[cindex] - 1)
                 .call();
