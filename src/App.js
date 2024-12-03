@@ -222,7 +222,27 @@ class App extends Component {
         <Routes>
           <Route
             path="/"
-            element={<div className="m-5">Welcome to GiveCoin!...</div>}
+            element={
+              <div className="m-5">
+                <br />
+                <h1>Welcome to GiveCoin!</h1>
+                <br />
+                <p>
+                  This is your gateway to help the world via charities in a fair
+                  and transparent way. You are able to create your own
+                  fundraising campaigns stored in the blockchain or pick your
+                  favorite fund to donate to using your GiveCoins. Your donation
+                  will be held in escrow until the fund reaches a certain goal
+                  which will trigger our smart contracts. This ensures that a
+                  donation is only accessible to the fund when a requirement is
+                  met. In your own campaign, you can set your own goals. This
+                  way we ensure trust and transparency between the funds and
+                  you. It's immutable and the system makes sure your coins are
+                  only transferred when they should. Start donating or raising
+                  today!
+                </p>
+              </div>
+            }
           />
           <Route
             path="/donations"

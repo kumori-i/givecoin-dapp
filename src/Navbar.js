@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { withNavigate } from "./withNavigate";
+import logo from "./givecoin logo.jpg";
 
 class Navbar extends Component {
   handleCreateCampaignSubmit = async (event) => {
@@ -74,6 +75,11 @@ class Navbar extends Component {
         <div className="container-fluid d-flex justify-content-between align-items-center">
           {/* Left side: GiveCoin for Charity and Campaigns */}
           <div className="d-flex align-items-center">
+            <img
+              src={logo}
+              alt="GiveCoin logo"
+              style={{ width: "30px", height: "auto" }}
+            />
             <Link className="navbar-brand" to="/" style={{ color: "white" }}>
               &nbsp; GiveCoin for Charity
             </Link>
