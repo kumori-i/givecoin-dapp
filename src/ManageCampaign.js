@@ -48,6 +48,9 @@ class ManageCampaign extends Component {
           const approved = await campaignContract.methods
             .getMilestoneApprovedAt(i)
             .call();
+          const transactionDescription = await campaignContract.methods
+            .getMileStoneTransactionDescription(i)
+            .call();
 
           if (!approved && !found) {
             this.setState({ currentMilestoneIndex: i });
@@ -58,6 +61,7 @@ class ManageCampaign extends Component {
             index: i,
             amount,
             approved,
+            transactionDescription,
           });
         } catch (error) {
           console.error("Error fetching milestone data at index", i, error);
@@ -142,7 +146,7 @@ class ManageCampaign extends Component {
     }
   };
 
-  handleMilestoneApproval = async (event) => {
+  handleMilestoneApproval = async (event, inputString) => {
     event.preventDefault();
     try {
       const cindex = this.props.campaignOwner.findIndex(
@@ -156,7 +160,7 @@ class ManageCampaign extends Component {
         );
 
         await campaignContract.methods
-          .approveMilestone()
+          .approveMilestone(inputString)
           .send({ from: this.props.account });
 
         alert(
@@ -174,6 +178,15 @@ class ManageCampaign extends Component {
       alert("You must wait until your milestone goal has been met.");
     } catch (error) {
       console.log("Navigation failed:", error);
+    }
+  };
+
+  showApprovalPopup = (event) => {
+    const userInput = prompt("Please specify on what the milestone is spent:");
+    if (userInput !== null && userInput.trim() !== "") {
+      this.handleMilestoneApproval(event, userInput.trim());
+    } else {
+      alert("Approval canceled or input was empty.");
     }
   };
 
@@ -228,47 +241,53 @@ class ManageCampaign extends Component {
                 <th scope="col">Milestone Index</th>
                 <th scope="col">Goal</th>
                 <th scope="col">Approval</th>
+                <th scope="col">Milestone transaction description</th>
                 <th scope="col">Status</th>
               </tr>
             </thead>
             <tbody>
-              {milestonesData.map(({ index, amount, approved }) => (
-                <tr key={index} style={{ color: "white" }}>
-                  <td>{index + 1}</td>
-                  <td>{window.web3.utils.fromWei(amount, "ether")}</td>
-                  <td>{approved ? "Approved" : "Not Approved"}</td>
-                  <td>
-                    {index === this.state.currentMilestoneIndex &&
-                    this.state.currentMilestoneIndex !==
-                      this.props.campaignMilestones[cindex] ? (
-                      parseFloat(window.web3.utils.fromWei(amount, "ether")) ===
-                      parseFloat(
-                        window.web3.utils.fromWei(
-                          this.props.campaignTotalAmountReceived[cindex],
-                        ),
-                      ) ? (
-                        <button
-                          className="btn btn-primary btn-sm"
-                          onClick={this.handleMilestoneApproval}
-                        >
-                          Approve
-                        </button>
+              {milestonesData.map(
+                ({ index, amount, approved, transactionDescription }) => (
+                  <tr key={index} style={{ color: "white" }}>
+                    <td>{index + 1}</td>
+                    <td>{window.web3.utils.fromWei(amount, "ether")}</td>
+                    <td>{approved ? "Approved" : "Not Approved"}</td>
+                    <td>{transactionDescription}</td>
+                    <td>
+                      {index === this.state.currentMilestoneIndex &&
+                      this.state.currentMilestoneIndex !==
+                        this.props.campaignMilestones[cindex] ? (
+                        parseFloat(
+                          window.web3.utils.fromWei(amount, "ether"),
+                        ) ===
+                        parseFloat(
+                          window.web3.utils.fromWei(
+                            this.props.campaignTotalAmountReceived[cindex],
+                          ),
+                        ) ? (
+                          <button
+                            className="btn btn-primary btn-sm"
+                            onClick={this.showApprovalPopup}
+                          >
+                            Approve
+                          </button>
+                        ) : (
+                          <button
+                            className="btn btn-primary btn-sm"
+                            onClick={this.handleMilestoneDenial}
+                          >
+                            Approve
+                          </button>
+                        )
+                      ) : approved ? (
+                        "Approved"
                       ) : (
-                        <button
-                          className="btn btn-primary btn-sm"
-                          onClick={this.handleMilestoneDenial}
-                        >
-                          Approve
-                        </button>
-                      )
-                    ) : approved ? (
-                      "Approved"
-                    ) : (
-                      "Not yet Approved"
-                    )}
-                  </td>
-                </tr>
-              ))}
+                        "Not yet Approved"
+                      )}
+                    </td>
+                  </tr>
+                ),
+              )}
             </tbody>
           </table>
           <div className="container-flex d-flex justify-content-center align-items-center">

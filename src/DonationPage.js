@@ -43,11 +43,15 @@ class DonationPage extends Component {
           const approved = await campaignContract.methods
             .getMilestoneApprovedAt(i)
             .call();
+          const transactionDescription = await campaignContract.methods
+            .getMileStoneTransactionDescription(i)
+            .call();
 
           milestonesData.push({
             index: i,
             amount,
             approved,
+            transactionDescription,
           });
         } catch (error) {
           console.error("Error fetching milestone data at index", i, error);
@@ -138,19 +142,23 @@ class DonationPage extends Component {
               <th scope="col">Milestone</th>
               <th scope="col">Goal</th>
               <th scope="col">Approval</th>
+              <th scope="col">Milestone transaction description</th>
             </tr>
           </thead>
           <tbody>
-            {milestonesData.map(({ index, amount, approved }) => (
-              <tr key={index} style={{ color: "white" }}>
-                <td>{index + 1}</td>
-                <td>{window.web3.utils.fromWei(amount, "ether")}</td>
-                <td>{approved ? "Approved" : "Not Approved"}</td>
-              </tr>
-            ))}
+            {milestonesData.map(
+              ({ index, amount, approved, transactionDescription }) => (
+                <tr key={index} style={{ color: "white" }}>
+                  <td>{index + 1}</td>
+                  <td>{window.web3.utils.fromWei(amount, "ether")}</td>
+                  <td>{approved ? "Approved" : "Not Approved"}</td>
+                  <td>{transactionDescription}</td>
+                </tr>
+              ),
+            )}
           </tbody>
         </table>
-
+        {/*Add in table description of transaction */}
         <div className="card mb-2" style={{ opacity: "0.9" }}>
           <form className="mb-3" onSubmit={this.handleSubmit}>
             <div style={{ borderSpacing: "0 1em" }}>

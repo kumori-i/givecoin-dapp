@@ -20,6 +20,7 @@ contract Campaign {
     struct Milestone {
         uint256 amount;
         bool approved;
+        string transactionDescription;
     }
 
     mapping(uint8 => Milestone) public milestones;
@@ -56,18 +57,23 @@ contract Campaign {
             amount < totalAmountNeeded,
             "Can not set milestone above or equal to amount needed"
         );
-        milestones[Milestones] = Milestone({amount: amount, approved: false});
+        milestones[Milestones] = Milestone({
+            amount: amount,
+            approved: false,
+            transactionDescription: "Not reached"
+        });
         Milestones++;
 
         escrow.issueCoin();
     }
 
-    function approveMilestone() public onlyOwner {
+    function approveMilestone(string memory parameter) public onlyOwner {
         require(
             totalAmountReceived == milestones[currentMilestoneIndex].amount,
             "Current Milestone has not been reached."
         );
         milestones[currentMilestoneIndex].approved = true;
+        milestones[currentMilestoneIndex].transactionDescription = parameter; //set the transactionDescription
 
         currentMilestoneIndex++;
 
@@ -97,6 +103,7 @@ contract Campaign {
     //     );
     // }
     //
+
     function getOwner() public view returns (address) {
         return owner;
     }
@@ -164,4 +171,10 @@ contract Campaign {
     function getDonatedAmount() public view returns (uint256) {
         return donations[msg.sender];
     }
+
+    function getMileStoneTransactionDescription(
+        uint8 index
+    ) public view returns (string memory) {
+        return milestones[index].transactionDescription;
+    } //Getting transactionDescription
 }
